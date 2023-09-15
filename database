@@ -1,0 +1,132 @@
+-- drop database hospital;
+create schema if not exists hospital;
+use hospital;
+-- 4.4.2.Criando as tabelas / relacionamentos
+create table hospital.paciente(
+id_pac int auto_increment,
+nome varchar(25),
+cpf varchar(11),
+data_nasc varchar(10),
+primary key(id_pac));
+
+create table hospital.especialidade(
+id_es int,
+especialidade varchar(25),
+primary key(id_es));
+
+
+create table hospital.medico(
+id_med int,
+nome varchar(25),
+cpf varchar(11),
+id_es int,
+primary key(id_med),
+foreign key (id_es)
+references especialidade(id_es));
+
+
+create table hospital.consulta(
+id_con int,
+id_med int,
+id_pac int,
+primary key(id_con),
+foreign key (id_med)
+references medico(id_med),
+foreign key (id_pac)
+references paciente(id_pac));
+
+
+
+
+create table hospital.telefone_med(
+id int,
+numero varchar (15),
+id_med int,
+primary key (id),
+foreign key (id_med)
+references medico (id_med));
+
+-- 4.4.3.Inserindo dados nas tabelas
+insert into paciente values(1, 'Maria Pereira', 45679824652,1978-08-04);
+insert into paciente values(2, 'Maria Sousa', 12685524892,1980-09-06);
+insert into paciente values(3, 'João Pereira', 26546789246,2007-03-07);
+insert into paciente values(4, 'Jose Pereira', 45324561039,2002-01-02);
+insert into paciente values(5, 'Fabio Ferreira', 64210346213,1990-08-09);
+insert into paciente values(6, 'Carlos Magno', 40245621455,1997-08-07);
+insert into paciente values(7, 'Ana Costa', 67982465444,1996-08-14);
+insert into paciente values(8, 'Eduardo Pereira', 62475301564,1998-09-30);
+insert into paciente values(9, 'Bruno Pereira', 95462103568,1980-11-05);
+insert into paciente values(10, 'Gustavo Silva', 45621067896,1989-12-08);
+
+insert into especialidade values(1,'Cardiologista');
+insert into especialidade values(2,'Endocrinologista');
+insert into especialidade values(3,'Otorrino');
+insert into especialidade values(4,'Geral');
+insert into especialidade values(5,'Pediatra');
+insert into especialidade values(6,'Psicologo');
+
+
+insert into medico values(1, 'Mariana Sousa', 21665474236,1);
+insert into medico values(2, 'Mariana Silva', 98455474236,2);
+insert into medico values(3, 'João Sousa', 36465474236,3);
+insert into medico values(4, 'Maria Sousa', 60865474236,4);
+insert into medico values(5, 'Jose Sousa', 04565474236,5);
+insert into medico values(6, 'Carlos Sousa', 78565474236,6);
+select * from medico;
+
+
+
+
+insert into telefone_med values(1,34566875,1);
+insert into telefone_med values(2,34566875,2);
+insert into telefone_med values(3,34566875,3);
+insert into telefone_med values(4,34566875,4);
+insert into telefone_med values(5,34566875,5);
+insert into telefone_med values(6,34566875,6);
+
+ 
+ insert into consulta values(1,6,5);
+ insert into consulta values(2,2,4);
+ insert into consulta values(3,4,1);
+ insert into consulta values(4,1,3);
+ insert into consulta values(5,3,6);
+ insert into consulta values(6,5,7);
+ insert into consulta values(7,6,2);
+ 
+delimiter $$
+
+create procedure selecionar_medico_cardiologista()
+begin
+	select medico.nome,especialidade.especialidade from medico,especialidade 
+where medico.id_es=(1) and especialidade.id_es=(1);
+end $$
+
+delimiter ;
+
+call selecionar_medico_cardiologista;
+
+-- drop procedure selecionar_medico_cardiologista;
+
+
+set delimiter $$
+create trigger tg_paciente
+after insert on paciente
+	for each row begin
+		insert into paciente values (null, new.nome, new.cpf, new.data_nasc);
+	end $$
+
+delimiter ;
+
+
+show triggers;
+
+
+
+delimiter $
+create function hospital.qtde_pacientes() returns varchar(25)
+	begin
+		return (select count(nome) from paciente);
+end $
+delimiter ;
+
+select qtde_pacientes();
