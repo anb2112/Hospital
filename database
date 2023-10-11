@@ -1,7 +1,7 @@
 -- drop database hospital;
 create schema if not exists hospital;
 use hospital;
--- 4.4.2.Criando as tabelas / relacionamentos
+-- Criando as tabelas / relacionamentos
 create table hospital.paciente(
 id_pac int auto_increment,
 nome varchar(25),
@@ -46,7 +46,7 @@ primary key (id),
 foreign key (id_med)
 references medico (id_med));
 
--- 4.4.3.Inserindo dados nas tabelas
+-- Inserindo dados nas tabelas
 insert into paciente values(1, 'Maria Pereira', 45679824652,1978-08-04);
 insert into paciente values(2, 'Maria Sousa', 12685524892,1980-09-06);
 insert into paciente values(3, 'João Pereira', 26546789246,2007-03-07);
